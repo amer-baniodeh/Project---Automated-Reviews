@@ -1,7 +1,7 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export type SentimentResult = { label: string; score: number };
-export type ClusterInfo = { cluster_id: number; cluster_label: string };
+export type ClusterInfo = { cluster_id: string; cluster_label: string };
 export type ArticleResult = {
   category: string;
   article: string;
@@ -31,8 +31,7 @@ export async function getClusters(): Promise<ClusterInfo[]> {
   return handle<ClusterInfo[]>(res);
 }
 
-export async function assignCluster(productTitle: string): Promise<ClusterInfo & { cluster_id: number }> {
-  const res = await fetch(`${API_URL}/api/clusters/assign`, {
+export async function assignCluster(productTitle: string): Promise<ClusterInfo & { cluster_id: string }> {  const res = await fetch(`${API_URL}/api/clusters/assign`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ product_title: productTitle }),
@@ -40,8 +39,7 @@ export async function assignCluster(productTitle: string): Promise<ClusterInfo &
   return handle(res);
 }
 
-export async function generateArticle(clusterId: number): Promise<ArticleResult> {
-  const res = await fetch(`${API_URL}/api/articles`, {
+export async function generateArticle(clusterId: string): Promise<ArticleResult> {  const res = await fetch(`${API_URL}/api/articles`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ cluster_id: clusterId }),

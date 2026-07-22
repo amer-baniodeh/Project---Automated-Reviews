@@ -2,7 +2,7 @@
 Product category clustering module.
 
 Embeds product titles with a sentence-transformer and clusters them with
-KMeans into 4-6 meta-categories. Also exposes helpers to assign a NEW
+KMeans into 5 meta-categories. Also exposes helpers to assign a NEW
 product title to an existing (already-fit) cluster set, and to attach
 human-readable labels to cluster ids.
 """
@@ -12,8 +12,10 @@ import os
 from functools import lru_cache
 from typing import List
 
+
 import joblib
 import numpy as np
+
 
 MODELS_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "models", "B_clustering")
 KMEANS_PATH = os.path.join(MODELS_DIR, "kmeans_model.pkl")
@@ -77,5 +79,6 @@ def list_clusters() -> List[dict]:
     """Return all known clusters with their labels, for populating a dropdown."""
     labels = load_cluster_labels()
     if labels:
-        return [{"cluster_id": int(k), "cluster_label": v} for k, v in labels.items()]
-    return [{"cluster_id": i, "cluster_label": f"Cluster {i}"} for i in range(N_CLUSTERS)]
+        unique_names = sorted(set(labels.values()))
+        return [{"cluster_id": name, "cluster_label": name} for name in unique_names]
+    return []

@@ -27,12 +27,11 @@ class ClusterAssignResponse(BaseModel):
 
 
 class ClusterInfo(BaseModel):
-    cluster_id: int
+    cluster_id: str
     cluster_label: str
 
-
 class ArticleRequest(BaseModel):
-    cluster_id: int
+    cluster_id: str
 
 
 class TopProduct(BaseModel):

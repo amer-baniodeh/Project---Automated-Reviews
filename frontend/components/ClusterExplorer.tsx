@@ -5,7 +5,7 @@ import { getClusters, generateArticle, ClusterInfo, ArticleResult } from "../lib
 
 export default function ClusterExplorer() {
   const [clusters, setClusters] = useState<ClusterInfo[]>([]);
-  const [selected, setSelected] = useState<number | null>(null);
+  const [selected, setSelected] = useState<string | null>(null);
   const [article, setArticle] = useState<ArticleResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +39,7 @@ export default function ClusterExplorer() {
       <h3>Explore a product category</h3>
       <select
         value={selected ?? ""}
-        onChange={(e) => setSelected(Number(e.target.value))}
+        onChange={(e) => setSelected(e.target.value)}
       >
         {clusters.map((c) => (
           <option key={c.cluster_id} value={c.cluster_id}>

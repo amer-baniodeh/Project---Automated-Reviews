@@ -2,10 +2,11 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export type SentimentResult = { label: string; score: number };
 export type ClusterInfo = { cluster_id: string; cluster_label: string };
+export type TopProduct = { product_title: string; mean: number; count: number };
 export type ArticleResult = {
   category: string;
   article: string;
-  top_products: { product_title: string; mean: number; count: number }[];
+  top_products: TopProduct[];
   worst_product: { product: string; avg_rating: number; count: number };
 };
 

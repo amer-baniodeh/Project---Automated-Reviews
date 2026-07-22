@@ -31,7 +31,7 @@ export async function getClusters(): Promise<ClusterInfo[]> {
   return handle<ClusterInfo[]>(res);
 }
 
-export async function assignCluster(productTitle: string): Promise<ClusterInfo & { cluster_id: string }> {  const res = await fetch(`${API_URL}/api/clusters/assign`, {
+export async function assignCluster(productTitle: string): Promise<ClusterInfo> {  const res = await fetch(`${API_URL}/api/clusters/assign`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ product_title: productTitle }),

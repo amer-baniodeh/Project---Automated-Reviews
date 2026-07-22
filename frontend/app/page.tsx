@@ -11,15 +11,19 @@ export default function Home() {
 
   return (
     <div className="container">
-      <h1>Automated Customer Reviews</h1>
-      <p className="subtitle">Sentiment classification, clustering & AI-generated recommendations</p>
+      <h1 className="pixel-title pixel-display">
+        REVIEW SCANNER<span className="blink-cursor">_</span>
+      </h1>
+      <p className="pixel-subtitle">
+        Sentiment classification, clustering &amp; AI-generated recommendations
+      </p>
 
       <div className="tabs">
         <button className={`tab ${tab === "sentiment" ? "active" : ""}`} onClick={() => setTab("sentiment")}>
-          Sentiment Classifier
+          SENTIMENT
         </button>
         <button className={`tab ${tab === "clusters" ? "active" : ""}`} onClick={() => setTab("clusters")}>
-          Category Insights
+          CATEGORIES
         </button>
       </div>
 

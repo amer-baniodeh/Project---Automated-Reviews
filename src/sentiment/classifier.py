@@ -95,7 +95,7 @@ def _predict_sentiment_openai(text: str) -> Dict[str, float]:
             },
             {"role": "user", "content": text[:2000]},  # defensive truncation
         ],
-        max_tokens=50,
+        max_completion_tokens=100,
     )
     try:
         parsed = json.loads(response.choices[0].message.content)

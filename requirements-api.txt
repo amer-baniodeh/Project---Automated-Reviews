@@ -1,0 +1,16 @@
+# Lightweight requirements for deploying api/ to Render/Railway/etc.
+# Deliberately excludes torch/transformers/sentence-transformers - the
+# deployed API uses OpenAI (see src/sentiment/classifier.py and
+# src/summarization/summarizer.py) instead of local models, so those heavy
+# packages are never imported at runtime and don't need to be installed.
+#
+# Use requirements.txt (the full version) for local development/notebooks,
+# where the local model backends are still used and validated.
+
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic==2.9.2
+python-multipart==0.0.9
+pandas==2.2.2
+numpy==1.26.4
+openai>=1.40.0

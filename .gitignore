@@ -1,3 +1,4 @@
 .env
 datasets/*.csv
+!datasets/clusters_with_reviews.csv
 node_modules/

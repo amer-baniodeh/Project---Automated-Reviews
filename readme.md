@@ -1,47 +1,127 @@
-**Project Goal**
+# 🛍️ Automated Customer Reviews
 
-This project aims to develop a product review system powered by NLP models that aggregate customer feedback from different sources. The key tasks include classifying reviews, clustering product categories, and using generative AI to summarize reviews into recommendation articles.
+## About
 
+This project was developed as part of the Ironhack AI Engineering Bootcamp. The goal
+was to build an NLP system that turns Amazon product reviews into useful insights:
+classifying review sentiment, grouping products into categories, and generating
+short recommendation articles automatically.
 
+---
 
-## Deployment notes (FastAPI + Vercel)
+## Dataset
 
-**Current setup: frontend on Vercel, backend on Render/Railway/Fly.io, using OpenAI
-instead of local models in production.**
+Three Amazon product review exports from [Datafiniti (via Kaggle)](https://www.kaggle.com/datasets/datafiniti/consumer-reviews-of-amazon-products/data),
+merged into one dataset:
 
-Local Hugging Face models (`cardiffnlp/twitter-roberta-base-sentiment`, `facebook/bart-large-cnn`)
-are too heavy for small hosting tiers - loading them into memory alongside `torch`
-routinely exceeds a free-tier instance's RAM. Rather than paying for a bigger
-instance, `src/sentiment/classifier.py` and `src/summarization/summarizer.py`
-each support two backends, chosen automatically:
+- **59,743** unique reviews
+- **89** product IDs, **7** brands
+- Columns used: product name, brand, review text, star rating
 
-- **No `OPENAI_API_KEY` set** → local pretrained models (what the Day 1 notebooks
-  use and validate - accuracy/F1/confusion matrix results are unaffected by this)
-- **`OPENAI_API_KEY` set** → OpenAI API calls instead (`gpt-4o-mini` by default) -
-  no `torch`/`transformers` ever loaded into memory, fits comfortably on a free tier
+While merging, we found the `id` column wasn't reliable — the same id sometimes
+pointed to completely different products. We cleaned the product name field and used
+that as the main identifier instead.
 
-### Backend deploy (Render, or similar)
-1. Build command: `pip install -r requirements-api.txt` (deliberately excludes
-   `torch`/`transformers`/`sentence-transformers` - not needed when using OpenAI)
-2. Start command: `uvicorn api.index:app --host 0.0.0.0 --port $PORT`
-3. Environment variables:
-   - `OPENAI_API_KEY` = your key (set as a secret, never commit it)
-4. Make sure `datasets/clusters_with_reviews.csv` and
-   `models/B_clustering/cluster_labels.json` are committed to git (see
-   `.gitignore` - most of `datasets/` is excluded by default, but these
-   specific generated files are needed at runtime and should NOT be ignored)
+---
 
-### Frontend deploy (Vercel)
-1. Root Directory: `frontend` (not the repo root)
-2. Environment variable: `NEXT_PUBLIC_API_URL` = your deployed backend URL
-3. Framework preset should auto-detect as Next.js once Root Directory is set correctly
+## Preprocessing
 
-### Local development
-Don't set `OPENAI_API_KEY` locally (or notebooks/tests will start costing money
-and can drift from the validated Day 1 results) - local dev and notebooks use
-the free local models by default. If you specifically want to test the OpenAI
-path locally before deploying, set the env var only in that terminal session:
+- Merged and deduplicated the three raw files
+- Fixed corrupted/concatenated product names
+- Mapped star ratings to sentiment: 1-2 → negative, 3 → neutral, 4-5 → positive
+- Removed empty/duplicate reviews
+
+---
+
+## Models Evaluated (Sentiment)
+
+| Model | Accuracy | Macro F1 |
+|---|---|---|
+| Random Forest (TF-IDF) | 94.4% | 40.7% |
+| Local RoBERTa (pretrained) | 90.0% | 52.8% |
+| OpenAI gpt-5.4-mini | 90.6% | 55.5% |
+| **OpenAI gpt-4o-mini** | **91.6%** | **56.4%** |
+
+Random Forest looks best on accuracy alone, but it almost never gets the "neutral"
+class right — Macro F1 is the fairer comparison since the dataset is skewed toward
+positive reviews. gpt-4o-mini performed best overall and is what the deployed app uses.
+
+Neutral (3-star) reviews were the hardest for every model — they're often genuinely
+mixed ("loved the screen, hated the battery") rather than moderate in tone.
+
+---
+
+## Clustering
+
+Product titles were embedded with `sentence-transformers/all-MiniLM-L6-v2` and grouped
+with KMeans into 5 categories:
+
+- Fire Tablets
+- E-Readers & Accessories
+- Echo & Smart Speakers
+- Fire TV & Accessories
+- Speakers & Power Accessories
+
+---
+
+## Summarization
+
+For each category, a short article is generated with the top 3 products, their common
+complaints, and the worst-rated product to avoid. Rankings use a weighted score so a
+product with just 1-2 perfect reviews can't outrank one with hundreds of good reviews.
+
+Complaint text is condensed by an LLM (OpenAI in production, a local BART model
+available for local/offline use) — everything else (rankings, structure) is handled
+with plain code, not the model, to keep the output reliable.
+
+---
+
+## 🚀 Live Demo
+
+Try the deployed app here:
+
+**\<(https://project-automated-reviews-4h6x-fawn.vercel.app/)\>**
+
+---
+
+## 🛠 Tech Stack
+
+- Python, FastAPI
+- Next.js, React
+- Hugging Face Transformers, Sentence-Transformers
+- scikit-learn (TF-IDF, Random Forest, KMeans)
+- OpenAI API
+- Deployed on Vercel (frontend) + Render (backend)
+
+---
+
+## Installation
+
 ```bash
-export OPENAI_API_KEY=sk-...
-uvicorn api.index:app --reload --port 8000
+git clone https://github.com/amer-baniodeh/Project---Automated-Reviews.git
+cd Project---Automated-Reviews
+
+pip install -r requirements.txt
 ```
+
+Run the notebooks in order (`00_data_merging_and_cleaning.ipynb` first, then the
+notebooks under `A_sentiment_analysis/` and `B_clustering/`) in Jupyter or Google Colab.
+
+To run the app locally:
+
+```bash
+# backend
+uvicorn api.index:app --reload --port 8000
+
+# frontend (separate terminal)
+cd frontend
+npm install
+npm run dev
+```
+
+---
+
+## 👥 Authors
+
+**Amer Baniodeh**
+GitHub: <https://github.com/amer-baniodeh>

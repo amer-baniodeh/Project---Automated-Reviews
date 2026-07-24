@@ -221,7 +221,7 @@ def build_category_article(
     article = (
         f"## Best in {category_label}\n\n"
         + "\n\n".join(product_sections)
-        + f"\n\n## Avoid: {worst['product']}\n"
+        + f"\n\n## Avoid: {worst['product']}\n\n"
         f"Rated {worst['avg_rating']:.1f}/5 across {worst['count']} reviews - "
         f"the lowest in this category. {worst_complaint_summary}"
     )

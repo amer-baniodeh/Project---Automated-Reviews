@@ -80,7 +80,7 @@ with plain code, not the model, to keep the output reliable.
 
 Try the deployed app here:
 
-**\<(https://project-automated-reviews-4h6x-fawn.vercel.app/)\>**
+**\https://project-automated-reviews-4h6x-fawn.vercel.app/**
 
 ---
 

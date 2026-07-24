@@ -1,5 +1,7 @@
 # 🛍️ Automated Customer Reviews
 
+<img width="1012" height="499" alt="Screenshot 2026-07-23 at 07 16 01" src="https://github.com/user-attachments/assets/27473a5e-2a52-4d67-9df4-0ce79e50aab3" />
+
 ## About
 
 This project was developed as part of the Ironhack AI Engineering Bootcamp. The goal
